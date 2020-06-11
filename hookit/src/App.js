@@ -7,24 +7,29 @@ class App extends React.Component {
   constructor(props) {
     super(props)
     this.state = {
-
-      posts: []
+      posts: [],
+      values: []
     }
   }
 
   componentDidMount() {
 
-    axios.get("/hookit.homework/Posts.json").then(
-      (res) => {
-        console.log(res.data);
-        this.setState({
-          posts: res.data
-        })
-      }
-    ).catch((err) => {
-      console.log(err);
-    })
-}
+    axios.all([
+      axios.get("/hookit.homework/Posts.json"),
+      axios.get("/hookit.homework/PostValues.json")
+    ])
+    .then(axios.spread((res1, res2) => {
+      console.log(res1.data)
+      console.log(res2.data)
+      this.setState({
+        posts: res1.data,
+        values: res2.data
+      })
+    }))
+    .catch(error => {
+      console.log(error)
+    });
+  }
 
   render() {
     return (
